@@ -6,7 +6,16 @@
 </head>
 <body>
     <form method="post">
-        <select name="family_member"></select>
+        {% csrf_token %}
+        {{pop}}
+        <select name="family_member">
+            {%for member in family_member%}
+            <option value="{{member.id}}">{{member.name}}</option>
+            {%endfor%}
+            <option value="new">Dodaj nowego użytkownika</option>
+        </select><br>
+            <input type="text" name="new_family_member" value="Imię"> <br>
+        <button type="submit">Zaloguj</button>
     </form>
 
 </body>
