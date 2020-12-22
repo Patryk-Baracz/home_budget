@@ -1,3 +1,20 @@
 body {
-    background: goldenrod;
+    background: dimgrey;
 }
+/* "normalnie", "domyślnie", każde urządzenie zaczyna od tych styli */
+input.new-family-member {
+    width: 100%; /* ustaw szerokość na 100%... */
+}
+input[type=submit] {
+    color: red;
+}
+/* ale dla urządzeń które mają ekran szerszy niż 600px mamy trochę nowych reguł */
+@media (min-width: 600px) { /* tu się zaczynają style na większe ekrany */
+      input.new-family-member {
+          width: 400px; /* 400px ale tylko na większych niż smartfon urządzeniach. Na mniejszych - dalej 100% */
+          text-decoration: underline; /* zbiory styli tutaj (wewnątrz @media) */
+                                      /* i tych domyślnych (na górze) nie muszą być takie same! */
+      }
+      footer { font-weight: bold; }
+      /* nie chcę zmieniać koloru submita, więc nie muszę powtarzać tutaj jego styli */
+} /* pamiętamy że @media też trzeba zamknąć klamerką! */

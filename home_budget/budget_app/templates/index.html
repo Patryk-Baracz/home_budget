@@ -7,7 +7,23 @@
     <title>Budget_app</title>
 </head>
 <body>
-<h1>Budżet domowy</h1><h3>Wersja 1.0, Autor: Patryk</h3>
+<h1>Budżet domowy</h1><h3>Wersja 1.0, Autor: Patryk</h3><br>
+
+<form method="post" name="expense" action="dodaj-wydatek/">
+    {% csrf_token %}
+    <h1>DODAJ WYDATEK</h1><br>
+    Opis:<input name="description" type="text"><br>
+    Kwota:<input name="amount" type="number">zł.<br>
+    Data:<input type="date" name="date" value="{{today}}"><br>
+    Kategoria:
+    {{category}}
+    {%for c in category%}
+        <input name="category" type="radio" id="{{c.name}}" value="{{c.id}}">
+        <label for="{{c.name}}">{{c.name}}</label>
+    {%endfor%}
+    <button type="submit">OK</button>
+
+</form>
 
 </body>
 </html>
