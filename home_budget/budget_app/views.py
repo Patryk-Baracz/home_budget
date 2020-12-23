@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from budget_app.models import FamilyMember, Category, MoneyTransfer
 from django.shortcuts import redirect
-from django.utils.timezone import now
+import datetime
 
 
 # Create your views here.
@@ -19,7 +19,8 @@ def index(request):
         return maybe_redirect
     else:
         category = Category.objects.all()
-        return render(request, 'index.html', {'category': category})
+        today = datetime.date.today
+        return render(request, 'index.html', {'category': category, 'today': today})
 
 
 
@@ -51,14 +52,28 @@ class Expense(View):
         owner = FamilyMember.objects.get(id=owner_id)
         description = request.POST['description']
         if request.POST['date']:
-            date = request.POST['date']
+            day = request.POST['date']
         else:
-            date = now()
+            day = None
         amount = 0 - int(request.POST['amount'])
         category_id = request.POST['category']
         if category_id:
             category = Category.objects.get(id=category_id)
         else:
             category = None
-        MoneyTransfer.objects.create(owner=owner, description=description, date=date, amount=amount, category=category)
+        MoneyTransfer.objects.create(owner=owner, description=description, date=day, amount=amount, category=category)
+        return redirect('/')
+
+class Income(View):
+    def post(self, request):
+        owner_id = request.session.get('family_member_id', None)
+        owner = FamilyMember.objects.get(id=owner_id)
+        description = 'Wpływ do budżetu'
+        if request.POST['date']:
+            day = request.POST['date']
+        else:
+            day = None
+        amount = int(request.POST['amount'])
+        category = None
+        MoneyTransfer.objects.create(owner=owner, description=description, date=day, amount=amount, category=category)
         return redirect('/')

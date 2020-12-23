@@ -1,5 +1,5 @@
 body {
-    background: dimgrey;
+    background: darkgray;
 }
 /* "normalnie", "domyślnie", każde urządzenie zaczyna od tych styli */
 input.new-family-member {
@@ -7,6 +7,13 @@ input.new-family-member {
 }
 input[type=submit] {
     color: red;
+}
+input.description {
+    width: 100%;
+}
+
+div {
+    border: 5px dotted black;
 }
 /* ale dla urządzeń które mają ekran szerszy niż 600px mamy trochę nowych reguł */
 @media (min-width: 600px) { /* tu się zaczynają style na większe ekrany */

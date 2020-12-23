@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+import datetime
 from django.utils.timezone import now
 
 # Create your models here.
@@ -16,7 +16,7 @@ class Category(models.Model):
         return self.name
 
 class MoneyTransfer(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(default=datetime.date.today)
     owner = models.ForeignKey(FamilyMember, on_delete=models.SET_NULL, null=True)
     amount = models.FloatField()
     description = models.TextField()
