@@ -3,6 +3,7 @@ from django.views import View
 from budget_app.models import FamilyMember, Category, MoneyTransfer
 from django.shortcuts import redirect
 import datetime
+import calendar
 
 
 # Create your views here.
@@ -19,9 +20,8 @@ def index(request):
         return maybe_redirect
     else:
         category = Category.objects.all()
-        today = datetime.date.today
+        today = str(datetime.date.today())
         return render(request, 'index.html', {'category': category, 'today': today})
-
 
 
 class Login(View):
@@ -46,16 +46,22 @@ class Login(View):
             request.session['family_member_id'] = request.POST['family_member']
             return redirect('/')
 
+
+def date_to_int(date):
+    d = date.split('-')
+    return datetime.date(int(d[0]), int(d[1]), int(d[2]))
+
+
 class Expense(View):
     def post(self, request):
         owner_id = request.session.get('family_member_id', None)
         owner = FamilyMember.objects.get(id=owner_id)
         description = request.POST['description']
         if request.POST['date']:
-            day = request.POST['date']
+            day = date_to_int(request.POST['date'])
         else:
-            day = None
-        amount = 0 - int(request.POST['amount'])
+            day = datetime.date.today()
+        amount = 0 - float(request.POST['amount'])
         category_id = request.POST['category']
         if category_id:
             category = Category.objects.get(id=category_id)
@@ -64,16 +70,61 @@ class Expense(View):
         MoneyTransfer.objects.create(owner=owner, description=description, date=day, amount=amount, category=category)
         return redirect('/')
 
+
 class Income(View):
     def post(self, request):
         owner_id = request.session.get('family_member_id', None)
         owner = FamilyMember.objects.get(id=owner_id)
         description = 'Wpływ do budżetu'
         if request.POST['date']:
-            day = request.POST['date']
+            day = date_to_int(request.POST['date'])
         else:
-            day = None
+            day = datetime.date.today()
         amount = int(request.POST['amount'])
         category = None
         MoneyTransfer.objects.create(owner=owner, description=description, date=day, amount=amount, category=category)
         return redirect('/')
+
+
+class Raport(View):
+    def get(self, request):
+        category = Category.objects.all()
+        today = datetime.date.today()
+        start = str(datetime.date(today.year, today.month, 1))
+        last_day = calendar.monthrange(today.year, today.month)
+        end = str(datetime.date(today.year, today.month, last_day[1]))
+        family_member = FamilyMember.objects.all()
+        return render(request, 'raport.html',
+                      {'category': category, 'start': start, 'end': end, 'family_member': family_member})
+
+    def post(self, request):
+        transactions = MoneyTransfer.objects.all()
+        q = request.POST['q']
+        if q:
+            transactions = transactions.filter(description__icontains=q)
+        start = request.POST['start']
+        if start:
+            transactions = transactions.filter(date__gte=start)
+        end = request.POST['end']
+        if end:
+            transactions = transactions.filter(date__lte=end)
+        categories = request.POST.getlist('category')
+        if categories:
+            transactions = transactions.filter(category__id__in=categories)
+        members = request.POST.getlist('family_member')
+        if members:
+            transactions = transactions.filter(owner__id__in=members)
+        min = request.POST['min']
+        if min:
+            if min != '0':
+                transactions = transactions.filter(amount__lte=f'-{min}')
+        max = request.POST['max']
+        if max:
+            if max != '0':
+                transactions = transactions.filter(amount__gte=f'-{max}')
+        value = 0
+        for trans in transactions:
+            value += trans.amount
+            if trans.category:
+                trans.category.color = Category.objects.get(name=trans.category).color
+            return render(request, 'raport-post.html', {'transactions': transactions, 'value': value})

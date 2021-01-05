@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/style.css/">
+    <meta charset="UTF-8">
+    <title>Budget_app</title>
+</head>
+<body>
+<form method="post" name="raport">
+    {% csrf_token %}
+    <label>Zapytanie: <input name="q" type="text"></label><br>
+    <div>
+        <br>DATY: <br>
+        <label>początek raportu: <input type="date" name="start" value="{{start}}"></label><br>
+        <label>koniec raportu:   <input type="date" name="end"value="{{end}}"></label><br>
+    </div>
+    <div>
+        <br>KATEGORIE: <br>
+        {% for cat in category %}
+        <label style="background:{{cat.color}}">
+        <input type="checkbox" name="category" value="{{cat.id}}">{{cat.name}}
+        </label><br>
+        {% endfor %}
+    </div>
+    <div>
+        <br> UŻYTKOWNICY: <br>
+        {% for member in family_member %}
+        <label>
+            <input type="checkbox" name="family_member" value="{{member.id}}" checked="checked">{{member.name}}
+        </label><br>
+        {% endfor %}
+    </div>
+    <div>
+        <br>WARTOŚCI: <br>
+        <label>min.<input type="number" name="min" value="0">zł.</label><br>
+        <label>max.<input type="number" name="max" value="0">zł.</label><br>
+    </div>
+
+    <br><input type="submit" value="Generuj Raport">
+
+</form>
+
+</body>
+</html>

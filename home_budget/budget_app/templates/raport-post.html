@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../static/style.css/">
+    <meta charset="UTF-8">
+    <title>Budget_app</title>
+    <style>
+    table, table * {border: 1px solid black}
+    table, table * {background: lightyellow}
+    </style>
+</head>
+<body>
+<a href="/">Strona główna</a><br>
+<a href="/raport/">Tworzenie raportu</a><br>
+<br>
+<table>
+    <thead>
+        <tr>
+            <th>Data</th><th>Użytkownik</th><th>Kwota</th><th>Opis</th><th>Kategoria</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trans in transactions %}
+        <tr>
+        <td>{{trans.date}}</td><td>{{trans.owner}}</td><td>{{trans.amount}}</td><td>{{trans.description}}</td>
+        {% if trans.category %} <td style="background:{{trans.category.color}}"> {{trans.category}} </td> {% endif %}
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2" style="background: aqua">SUMA:</td><td style="background: aqua">{{value}}</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

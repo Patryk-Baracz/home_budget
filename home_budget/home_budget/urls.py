@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from budget_app.views import index, Login, Expense, Income
+from budget_app.views import index, Raport, Login, Expense, Income
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,5 +23,5 @@ urlpatterns = [
     path('login/', Login.as_view()),
     path('dodaj-wydatek/', Expense.as_view()),
     path('dodaj-wplyw/', Income.as_view()),
-
+    path('raport/', Raport.as_view())
 ]
