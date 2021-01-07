@@ -4,7 +4,7 @@ from budget_app.models import FamilyMember, Category, MoneyTransfer
 from django.shortcuts import redirect
 import datetime
 import calendar
-
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -128,3 +128,14 @@ class Raport(View):
             if trans.category:
                 trans.category.color = Category.objects.get(name=trans.category).color
             return render(request, 'raport-post.html', {'transactions': transactions, 'value': value})
+
+class Hint(View):
+    def get(self, request):
+        text = request.GET.get('text')
+        transactions = MoneyTransfer.objects.all()
+        transactions = transactions.filter(description__icontains=text).values('description')
+        trans_list = []
+        for el in transactions:
+            trans_list.append(el['description'])
+        response = JsonResponse({'hints': trans_list})
+        return response
